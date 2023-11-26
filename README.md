@@ -1,4 +1,4 @@
 # Intervalltrainer
 Lerne musikalische Intervalle erkennen und benennen.
 
-[Starte hier!](https://wolf-so.github.io/Intervalltrainer/)https://wolf-so.github.io/Intervalltrainer/)
+[Starte hier!](https://wolf-so.github.io/Intervalltrainer/)
