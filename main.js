@@ -8,6 +8,9 @@ let questions = [];
 let answers = [];
 let questionIndex = 0;
 let correctAnswers = 0;
+let score = 0;
+let score_increment = 10;
+let bonus_interval = 0;
 let beginTime = "";
 
 const playInterval = function( id )
@@ -41,6 +44,7 @@ const generateTest = function()
     answers = [];
     questionIndex = 0;
     correctAnswers = 0;
+    score = 0;
 	setLevel(level);
 	
     for( let question = 0; question < questionCount; question++ )
@@ -56,7 +60,7 @@ const generateTest = function()
 
 const nextQuestion = function()
 {
-    show("questionIndex", "Level #" + level + ", Frage "
+    show("questionIndex", "Level #" + level + ", " + score + " Punkte<br> Frage "
                             + ( questionIndex + 1 ) +
                              " von " +
                              questionCount );
@@ -64,19 +68,17 @@ const nextQuestion = function()
 
 }
 
-const doRandom = function() {
-	
-	const di = getRandomDynamicInterval(5);
-	playDynamicInterval(di)
-};
-
 const doAnswer = function(id)
 {
-    doEvaluateAnswer(id);
+    let okay = doEvaluateAnswer(id);
     questionIndex++;
-    if( questionIndex < questionCount )
+    if (questionIndex < questionCount)
     {
-        nextQuestion();
+        if (okay) {
+            nextQuestion();
+        } else {
+            window.setTimeout(nextQuestion, 1000);
+        }
     }
     else
     {
@@ -84,47 +86,66 @@ const doAnswer = function(id)
     }
 }
 
+const showValue = function(id, okay, duration)
+{
+    let val = document.querySelector('#b'+(id)+' > .eval');
+    if (okay) {
+        val.textContent = '✔️'; /* Emoji Grüner Haken */
+    } else {
+        val.textContent = '❌'; /* Emoji Rotes Kreuz */
+    }
+    const clear = function() { val.textContent = ''; };
+	window.setTimeout (clear, duration);
+}
+
 const doEvaluateAnswer = function(id)
 {
+    let okay = false;
     let interval = getInterval( id );
     if( interval.code === answers[questionIndex].code)
     {
+        okay = true;
         correctAnswers++;
+        score += score_increment;
+        if (id == bonus_interval) {
+            score += 5;
+        }
+        showValue(interval.code, true, 500);
         show("message", "&nbsp");
     }
     else
     {
+        showValue(interval.code, false, 1000);
+        showValue(answers[questionIndex].code, true, 1000);
         show("message", "Falsch, die richtige Antwort ist: " +
                             answers[questionIndex].name );
     }
+    return okay;
 }
 
 const finishGame = function()
 {
     show("startButton");
     hide("questionArea");
-    let highScoreMessage = "Du konntest deine Leistung nicht verbessern. ";
+    let highScoreMessage = score + " Punkte. Du konntest deine Leistung nicht verbessern.<br>";
     let delta = Date.now() - beginTime; // milliseconds elapsed since start
     let completionSeconds = Math.floor(delta / 1000);
 	
 	tryAdvanceLevel();
 	
-    if( saveHighScore( completionSeconds ) )
-    {
-        highScoreMessage = "Neue Bestleistung! ";
+    if (saveHighScore(completionSeconds)) {
+        highScoreMessage = score + " Punkte. Neue Bestleistung!<br>";
     }
 
     show( "message", highScoreMessage + 
-                         correctAnswers +
+                         "(" + correctAnswers +
                          " von " + questionCount +
-                         " richtige Antworten in " + completionSeconds + " Sekunden." );
+                         " richtige Antworten in " + completionSeconds + " Sekunden.)" );
 }
 
 const tryAdvanceLevel = function()
 {
-	console.log("tryAdvanceLevel");
 	if (correctAnswers == questionCount) {
-		console.log("correctAnswers == questionCount");
 		if (level < 11) {
 			setLevel(level +1);
 		}
@@ -138,8 +159,14 @@ const setLevel = function(val)
 	} else if (val > 11) {
 		val = 11;
 	}
-	console.log("setLevel("+val+")");
 	level = val;
+    score_increment = 10 + (level-1)*5;
+    if (level > 1) {
+        bonus_interval = INTERVALS[level];
+    } else {
+        bonus_interval = 0;
+    }
+    console.log(bonus_interval);
 	for (let i=0; i<12; ++i) {
 		if (i <= level) {
 			document.getElementById("b"+INTERVALS[i]).disabled = false;
@@ -151,16 +178,17 @@ const setLevel = function(val)
 
 const saveHighScore = function( completionSeconds )
 {
-    let highScore = false;
-    let score = localStorage.getItem('score');
+    let improved_highscore = false;
+    let highscore = localStorage.getItem('highscore');
     let time = localStorage.getItem('time');
-    if( correctAnswers > score || ( correctAnswers >= score && completionSeconds < time ) )
+    console.log("highscore:", highscore, "time:", time);
+    if (score > highscore || (score >= highscore && completionSeconds < time))
     {
-        localStorage.setItem('score', correctAnswers);
+        localStorage.setItem('highscore', score);
         localStorage.setItem('time', completionSeconds);
-        highScore = true;
+        improved_highscore = true;
     }
-    return highScore;
+    return improved_highscore;
 }
 
 const replayInterval = function()
