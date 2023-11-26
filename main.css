@@ -1,109 +1,109 @@
 main {
-	max-width: 30rem;
-	padding: 1rem;
-	margin: auto;
+    max-width: 30rem;
+    padding: 1rem;
+    margin: auto;
 }
 
 #container {
-	border: .15em solid black;
-	border-radius: 1em;
-	background: white;
-	text-align: center;
+    border: .15em solid black;
+    border-radius: 1em;
+    background: white;
+    text-align: center;
 }
 
 #message {
-	padding-top: 15px;
+    padding-top: 15px;
 }
 
 .meta-info {
-	margin:0.5em 1em; 
-	text-align: center;
+    margin:0.5em 1em; 
+    text-align: center;
 }
 
 .meta-info > a {
-	padding: 1em
+    padding: 1em
 }
 
 /* Buttons */
 .button {
-	display: inline-block;
-	margin: .25em;
-	padding: .125em 1.5em;
-	font-size: 150%;
-	cursor: pointer;
-	text-align: center;
-	text-decoration: none;
-	outline: none;
-	color: #fff;
-	background-color: #ccc;
-	border: 1px solid #fff3;
-	border-radius: .5em;
-	box-shadow: 0 4px #999;
+    display: inline-block;
+    margin: .25em;
+    padding: .125em 1.5em;
+    font-size: 150%;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #ccc;
+    border: 1px solid #fff3;
+    border-radius: .5em;
+    box-shadow: 0 4px #999;
 }
 
 .ibutton {
-	width: 12em;
+    width: 12em;
 }
 .interval-1 {
-	color: #eee;
-	background-color: #ee1111;
+    color: #eee;
+    background-color: #ee1111;
 }
 .interval-2 {
-	color: #333;
-	background-color: #ffc000;
+    color: #333;
+    background-color: #ffc000;
 }
 .interval-3 {
-	color: #eee;
-	background-color: #843c0c;
+    color: #eee;
+    background-color: #843c0c;
 }
 .interval-4 {
-	color: #333;
-	background-color: #92cf50;
+    color: #333;
+    background-color: #92cf50;
 }
 .interval-5 {
-	color: #333;
-	background-color: #00aff0;
+    color: #333;
+    background-color: #00aff0;
 }
 .interval-6 {
-	color: #eee;
-	background-color: #bf0000;
+    color: #eee;
+    background-color: #bf0000;
 }
 .interval-7 {
-	color: #333;
-	background-color: #ff85ff;
+    color: #333;
+    background-color: #ff85ff;
 }
 .interval-8 {
-	color: #eee;
-	background-color: #008f00;
+    color: #eee;
+    background-color: #008f00;
 }
 .interval-9 {
-	color: #333;
-	background-color: #00fa00;
+    color: #333;
+    background-color: #00fa00;
 }
 .interval-10 {
-	color: #eee;
-	background-color: #0095fe;
+    color: #eee;
+    background-color: #0095fe;
 }
 .interval-11 {
-	color: #ddd;
-	background-color: #ff2f92;
+    color: #ddd;
+    background-color: #ff2f92;
 }
 .interval-12 {
-	color: #eee;
-	background-color: #9437ff;
+    color: #eee;
+    background-color: #9437ff;
 }
 
 .button:hover {
-	filter: brightness(115%);
-	border: 1px solid #777;
+    filter: brightness(115%);
+    border: 1px solid #777;
 }
 
 .button:active {
-	box-shadow: 0 2px #888;
-	transform: translateY(.125em);
+    box-shadow: 0 2px #888;
+    transform: translateY(.125em);
 }
 
 .button:disabled {
-	color: #ccc;
-	background-color: #999;
+    color: #ccc;
+    background-color: #999;
 }
