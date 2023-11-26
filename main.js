@@ -1,5 +1,19 @@
+const INTERVALS = [12, 7, 5, 2, 9, 4, 11, 10, 3, 8, 1, 6];
 
-const INTERVALS = [12, 7, 5, 4, 3, 9, 2, 8, 11, 10, 1, 6];
+const LEVEL_DISTRI = {
+0:  [20],
+1:  [10, 10],
+2:  [8, 7, 5],
+3:  [7, 6, 4, 3],
+4:  [6, 5, 4, 3, 2],
+5:  [6, 5, 4, 3, 1, 1],
+6:  [6, 5, 4, 2, 1, 1, 1],
+7:  [6, 5, 3, 2, 1, 1, 1, 1],
+8:  [6, 4, 3, 2, 1, 1, 1, 1, 1],
+9:  [5, 4, 3, 2, 1, 1, 1, 1, 1, 1],
+10: [5, 4, 3, 1, 1, 1, 1, 1, 1, 1, 1],
+11: [5, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+};
 
 const questionCount = 20;
 let level = 1;
@@ -46,12 +60,29 @@ const generateTest = function()
     correctAnswers = 0;
     score = 0;
 	setLevel(level);
+    
+    let distri = LEVEL_DISTRI[level];
+    let level_intervals = [];
+    for (let i=0; i<distri.length; ++i) {
+        for (let n=0; n<distri[distri.length-1-i]; ++n) {
+            level_intervals.push(INTERVALS[i]);
+        }
+    }
+    shuffle(level_intervals);
 	
-    for( let question = 0; question < questionCount; question++ )
+    let last_interval = undefined;
+    for (let question = 0; question < questionCount; ++question)
     {
-		const d_interval = getRandomDynamicInterval(level+1);
+		let d_interval = getRandomPlacedInterval(level_intervals[question]);
+        if (last_interval) {
+            while ((d_interval[2] == last_interval[2]) && (d_interval[1] == last_interval[1])) {
+                d_interval = getRandomPlacedInterval(level_intervals[question]);
+                console.log("replace duplicate interval")
+            }
+        }
 		questions[question] = d_interval;
         answers[question] = getInterval(d_interval[2]);
+        last_interval = d_interval;
     }
 
     beginTime = Date.now();
@@ -125,11 +156,12 @@ const doEvaluateAnswer = function(id)
 
 const finishGame = function()
 {
-    show("startButton");
-    hide("questionArea");
-    let highScoreMessage = score + " Punkte. Du konntest deine Leistung nicht verbessern.<br>";
     let delta = Date.now() - beginTime; // milliseconds elapsed since start
     let completionSeconds = Math.floor(delta / 1000);
+    
+    show("startButton");
+    hide("questionArea");
+    let highScoreMessage = score + " Punkte.<br>";
 	
 	tryAdvanceLevel();
 	
@@ -140,7 +172,7 @@ const finishGame = function()
     show( "message", highScoreMessage + 
                          "(" + correctAnswers +
                          " von " + questionCount +
-                         " richtige Antworten in " + completionSeconds + " Sekunden.)" );
+                         " richtig in " + completionSeconds + " Sekunden)" );
 }
 
 const tryAdvanceLevel = function()
@@ -196,11 +228,16 @@ const replayInterval = function()
     playDynamicInterval(questions[questionIndex]);
 }
 
+const getRandomPlacedInterval = function(interval)
+{
+    let base = getRandomInteger(40, 80-interval);
+    return [base, base+interval, interval];
+}
+
 const getRandomDynamicInterval = function(upper_bound)
 {
     let interval = INTERVALS[getRandomInteger(0, upper_bound)];
-    let base = getRandomInteger(40, 80-interval);
-    return [base, base+interval, interval];
+    return getRandomPlacedInterval(interval);
 }
 
 const show = function( id, value )
@@ -275,6 +312,27 @@ const checkRandomFunction = function()
 	for (let i=0; i<histo.length; ++i) {
 		console.log("histo[", i, "]==", histo[i])
 	}
+}
+
+/** Shuffle an array in place (Fisher–Yates shuffle). 
+ * Source: https://stackoverflow.com/a/2450976/2932052
+ */
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex > 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
 }
 
 /** Return a pseudo-random integer in the interval
