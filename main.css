@@ -44,6 +44,9 @@ main {
 .ibutton {
     width: 12em;
 }
+.ibutton > .eval {
+    font-size: 80%;
+}
 .interval-1 {
     color: #eee;
     background-color: #ee1111;
