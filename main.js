@@ -27,7 +27,7 @@ let score_increment = 10;
 let bonus_interval = 0;
 let beginTime = "";
 
-const playInterval = function( id )
+function playInterval(id)
 {
     document.getElementById(id).play();
 }
@@ -38,7 +38,7 @@ for (let i=40; i<=80; ++i) {
 	sounds[i] = new Audio("./sounds/git-mid"+i+".wav");
 }
 
-const playDynamicInterval = function( pair )
+function playDynamicInterval(pair)
 {
 	const start = 0;
 	const delay = 800;
@@ -48,7 +48,7 @@ const playDynamicInterval = function( pair )
 	window.setTimeout ( f2, delay );
 }
 
-const generateTest = function()
+function generateTest()
 {
     show("questionArea");
     hide("startButton");
@@ -59,6 +59,7 @@ const generateTest = function()
     questionIndex = 0;
     correctAnswers = 0;
     score = 0;
+    level = loadLevel();
 	setLevel(level);
     
     let distri = LEVEL_DISTRI[level];
@@ -89,35 +90,31 @@ const generateTest = function()
     nextQuestion();
 }
 
-const nextQuestion = function()
+function nextQuestion()
 {
-    show("questionIndex", "Level #" + level + ", " + score + " Punkte<br> Frage "
-                            + ( questionIndex + 1 ) +
-                             " von " +
-                             questionCount );
+    show("questionIndex", "Level #" + level +
+        " " + (questionIndex + 1) + "/" + 
+        questionCount + " <br> " + score + " Punkte");
 	playDynamicInterval(questions[questionIndex]);
 
 }
 
-const doAnswer = function(id)
+function doAnswer(id)
 {
     let okay = doEvaluateAnswer(id);
     questionIndex++;
-    if (questionIndex < questionCount)
-    {
+    if (questionIndex < questionCount) {
         if (okay) {
             nextQuestion();
         } else {
             window.setTimeout(nextQuestion, 1000);
         }
-    }
-    else
-    {
+    } else {
         finishGame();
     }
 }
 
-const showValue = function(id, okay, duration)
+function showValue(id, okay, duration)
 {
     let val = document.querySelector('#b'+(id)+' > .eval');
     if (okay) {
@@ -129,12 +126,11 @@ const showValue = function(id, okay, duration)
 	window.setTimeout (clear, duration);
 }
 
-const doEvaluateAnswer = function(id)
+function doEvaluateAnswer(id)
 {
     let okay = false;
     let interval = getInterval( id );
-    if( interval.code === answers[questionIndex].code)
-    {
+    if (interval.code === answers[questionIndex].code) {
         okay = true;
         correctAnswers++;
         score += score_increment;
@@ -143,9 +139,7 @@ const doEvaluateAnswer = function(id)
         }
         showValue(interval.code, true, 500);
         show("message", "&nbsp");
-    }
-    else
-    {
+    } else {
         showValue(interval.code, false, 1000);
         showValue(answers[questionIndex].code, true, 1000);
         show("message", "Falsch, die richtige Antwort ist: " +
@@ -154,7 +148,7 @@ const doEvaluateAnswer = function(id)
     return okay;
 }
 
-const finishGame = function()
+function finishGame()
 {
     let delta = Date.now() - beginTime; // milliseconds elapsed since start
     let completionSeconds = Math.floor(delta / 1000);
@@ -162,8 +156,6 @@ const finishGame = function()
     show("startButton");
     hide("questionArea");
     let highScoreMessage = score + " Punkte.<br>";
-	
-	tryAdvanceLevel();
 	
     if (saveHighScore(completionSeconds)) {
         highScoreMessage = score + " Punkte. Neue Bestleistung!<br>";
@@ -173,9 +165,10 @@ const finishGame = function()
                          "(" + correctAnswers +
                          " von " + questionCount +
                          " richtig in " + completionSeconds + " Sekunden)" );
+	tryAdvanceLevel();
 }
 
-const tryAdvanceLevel = function()
+function tryAdvanceLevel()
 {
 	if (correctAnswers == questionCount) {
 		if (level < 11) {
@@ -184,14 +177,17 @@ const tryAdvanceLevel = function()
 	}
 }
 
-const setLevel = function(val)
+function setLevel(val)
 {
 	if (val < 1) {
 		val = 1;
 	} else if (val > 11) {
 		val = 11;
 	}
-	level = val;
+    if (level != val) {
+        level = val;
+        storeLevel(level);
+    }
     score_increment = 10 + (level-1)*5;
     if (level > 1) {
         bonus_interval = INTERVALS[level];
@@ -208,14 +204,27 @@ const setLevel = function(val)
 	}
 }
 
-const saveHighScore = function( completionSeconds )
+function storeLevel(level)
+{
+    localStorage.setItem('level', level);
+}
+
+function loadLevel()
+{
+    let stored_level = localStorage.getItem('level');
+    if (!stored_level) {
+        stored_level = 1;
+    }
+    return Number(stored_level);
+}
+
+function saveHighScore(completionSeconds)
 {
     let improved_highscore = false;
     let highscore = localStorage.getItem('highscore');
     let time = localStorage.getItem('time');
     console.log("highscore:", highscore, "time:", time);
-    if (score > highscore || (score >= highscore && completionSeconds < time))
-    {
+    if (score > highscore || (score >= highscore && completionSeconds < time)) {
         localStorage.setItem('highscore', score);
         localStorage.setItem('time', completionSeconds);
         improved_highscore = true;
@@ -223,39 +232,38 @@ const saveHighScore = function( completionSeconds )
     return improved_highscore;
 }
 
-const replayInterval = function()
+function replayInterval()
 {
     playDynamicInterval(questions[questionIndex]);
 }
 
-const getRandomPlacedInterval = function(interval)
+function getRandomPlacedInterval(interval)
 {
     let base = getRandomInteger(40, 80-interval);
     return [base, base+interval, interval];
 }
 
-const getRandomDynamicInterval = function(upper_bound)
+function getRandomDynamicInterval(upper_bound)
 {
     let interval = INTERVALS[getRandomInteger(0, upper_bound)];
     return getRandomPlacedInterval(interval);
 }
 
-const show = function( id, value )
+function show(id, value)
 {
     let element = document.getElementById(id);
     element.style.display = "";
-    if( value !== undefined )
-    {
+    if (value !== undefined) {
         element.innerHTML = value;
     }
 }
 
-const hide = function( id )
+function hide(id)
 {
     document.getElementById(id).style.display = "none";
 }
 
-const getInterval = function( id )
+function getInterval(id)
 {
     id = id + "";
     let interval = { code: id, name: "Oktave" }
@@ -303,7 +311,7 @@ const getInterval = function( id )
     return interval;
 }
 
-const checkRandomFunction = function()
+function checkRandomFunction()
 {
 	histo = [0,0,0,0];
 	for (let i=0; i<4000*1000; ++i) {
@@ -338,7 +346,7 @@ function shuffle(array) {
 /** Return a pseudo-random integer in the interval
  *  between `min` (inclusive) and `max` (exclusive).
  */
-const getRandomInteger = function( min, max )
+function getRandomInteger(min, max)
 {
-	return Math.floor( Math.random() * ( max - min ) ) + min;
+	return Math.floor(Math.random() * (max - min)) + min;
 }

@@ -4,15 +4,20 @@ main {
     margin: auto;
 }
 
+h1 {
+    margin: .5em;
+}
+
 #container {
     border: .15em solid black;
     border-radius: 1em;
     background: white;
     text-align: center;
+    padding: .5em;
 }
 
 #message {
-    padding-top: 15px;
+    padding-top: 5px;
 }
 
 .meta-info {
