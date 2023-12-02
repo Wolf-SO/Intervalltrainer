@@ -35,7 +35,7 @@ function playInterval(id)
 let sounds = [];
 
 for (let i=40; i<=80; ++i) {
-	sounds[i] = new Audio("./sounds/git-mid"+i+".wav");
+	sounds[i] = new Audio("./sounds/git-mid"+i+".mp3");
 }
 
 function playDynamicInterval(pair)
