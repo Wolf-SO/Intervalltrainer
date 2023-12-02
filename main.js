@@ -23,14 +23,16 @@ let answers = [];
 let questionIndex = 0;
 let correctAnswers = 0;
 let score = 0;
+let answerTimeMilliseconds = 0;
 let score_increment = 10;
 let bonus_interval = 0;
 let beginTime = "";
+let beginTimeAnswer = "";
 
-function playInterval(id)
-{
-    document.getElementById(id).play();
-}
+//<< function playInterval(id)
+//<< {
+//<<     document.getElementById(id).play();
+//<< }
 
 let sounds = [];
 
@@ -38,12 +40,19 @@ for (let i=40; i<=80; ++i) {
 	sounds[i] = new Audio("./sounds/git-mid"+i+".mp3");
 }
 
-function playDynamicInterval(pair)
+function playDynamicInterval(pair, timeit)
 {
 	const start = 0;
 	const delay = 800;
-	const f1 = function() { sounds[pair[0]].cloneNode().play(); };
-	const f2 = function() { sounds[pair[1]].cloneNode().play(); };
+	const f1 = function() {
+        sounds[pair[0]].cloneNode().play();
+    };
+	const f2 = function() {
+        sounds[pair[1]].cloneNode().play();
+        if (timeit) {
+            beginTimeAnswer = Date.now();
+        }
+    };
 	window.setTimeout ( f1, start );
 	window.setTimeout ( f2, delay );
 }
@@ -59,6 +68,7 @@ function generateTest()
     questionIndex = 0;
     correctAnswers = 0;
     score = 0;
+    answerTimeMilliseconds = 0;
     level = loadLevel();
 	setLevel(level);
     
@@ -95,20 +105,21 @@ function nextQuestion()
     show("questionIndex", "Level #" + level +
         " " + (questionIndex + 1) + "/" + 
         questionCount + " <br> " + score + " Punkte");
-	playDynamicInterval(questions[questionIndex]);
+	playDynamicInterval(questions[questionIndex], true);
 
 }
 
 function doAnswer(id)
 {
     let okay = doEvaluateAnswer(id);
+    let deltaAnswer = Date.now() - beginTimeAnswer; // milliseconds elapsed since start
+    answerTimeMilliseconds += deltaAnswer;
+    show("questionIndex", "Level #" + level +
+        " " + (questionIndex + 1) + "/" + 
+        questionCount + " <br> " + score + " Punkte");
     questionIndex++;
     if (questionIndex < questionCount) {
-        if (okay) {
-            nextQuestion();
-        } else {
-            window.setTimeout(nextQuestion, 1000);
-        }
+        window.setTimeout(nextQuestion, 1000);
     } else {
         finishGame();
     }
@@ -137,7 +148,7 @@ function doEvaluateAnswer(id)
         if (id == bonus_interval) {
             score += 5;
         }
-        showValue(interval.code, true, 500);
+        showValue(interval.code, true, 1000);
         show("message", "&nbsp");
     } else {
         showValue(interval.code, false, 1000);
@@ -150,8 +161,8 @@ function doEvaluateAnswer(id)
 
 function finishGame()
 {
-    let delta = Date.now() - beginTime; // milliseconds elapsed since start
-    let completionSeconds = Math.floor(delta / 1000);
+    //<< let delta = Date.now() - beginTime; // milliseconds elapsed since start
+    let completionSeconds = Math.floor(answerTimeMilliseconds / 1000);
     
     show("startButton");
     hide("questionArea");
@@ -234,7 +245,7 @@ function saveHighScore(completionSeconds)
 
 function replayInterval()
 {
-    playDynamicInterval(questions[questionIndex]);
+    playDynamicInterval(questions[questionIndex], false);
 }
 
 function getRandomPlacedInterval(interval)
