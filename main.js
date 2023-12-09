@@ -29,11 +29,6 @@ let bonus_interval = 0;
 let beginTime = "";
 let beginTimeAnswer = "";
 
-//<< function playInterval(id)
-//<< {
-//<<     document.getElementById(id).play();
-//<< }
-
 let sounds = [];
 
 for (let i=40; i<=80; ++i) {
@@ -106,7 +101,6 @@ function nextQuestion()
         " " + (questionIndex + 1) + "/" + 
         questionCount + " <br> " + score + " Punkte");
 	playDynamicInterval(questions[questionIndex], true);
-
 }
 
 function doAnswer(id)
