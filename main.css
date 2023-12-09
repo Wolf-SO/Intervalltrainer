@@ -25,6 +25,10 @@ h1 {
     text-align: center;
 }
 
+.nobreak {
+    white-space: nowrap;
+}
+
 .meta-info > a {
     padding: 1em
 }
