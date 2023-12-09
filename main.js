@@ -36,6 +36,11 @@ for (let i=40; i<=80; ++i) {
 	sounds[i] = new Audio("./sounds/git-mid"+i+".mp3");
 }
 
+window.onload = function() {
+    let element = document.getElementById("version");
+    element.innerHTML = "v 0.91"
+};
+
 function playDynamicInterval(pair, timeit)
 {
 	const start = 0;

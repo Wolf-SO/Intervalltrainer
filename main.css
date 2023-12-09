@@ -25,6 +25,11 @@ h1 {
     text-align: center;
 }
 
+div .version {
+    float: right; 
+    font-size: 60%;
+}
+
 .nobreak {
     white-space: nowrap;
 }
@@ -51,7 +56,7 @@ h1 {
 }
 
 .ibutton {
-    width: 12em;
+    min-width: 80%;
 }
 .ibutton > .eval {
     font-size: 80%;
