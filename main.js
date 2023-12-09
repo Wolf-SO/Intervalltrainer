@@ -28,6 +28,7 @@ let score_increment = 10;
 let bonus_interval = 0;
 let beginTime = "";
 let beginTimeAnswer = "";
+let phase = "";
 
 let sounds = [];
 
@@ -46,6 +47,7 @@ function playDynamicInterval(pair, timeit)
         sounds[pair[1]].cloneNode().play();
         if (timeit) {
             beginTimeAnswer = Date.now();
+            phase = "ANSWERING";
         }
     };
 	window.setTimeout ( f1, start );
@@ -92,6 +94,7 @@ function generateTest()
     }
 
     beginTime = Date.now();
+    phase = "ASKING";
     nextQuestion();
 }
 
@@ -105,6 +108,10 @@ function nextQuestion()
 
 function doAnswer(id)
 {
+    if (phase != "ANSWERING") {
+        return;
+    }
+    phase = "ASKING";
     let okay = doEvaluateAnswer(id);
     let deltaAnswer = Date.now() - beginTimeAnswer; // milliseconds elapsed since start
     answerTimeMilliseconds += deltaAnswer;
@@ -155,7 +162,6 @@ function doEvaluateAnswer(id)
 
 function finishGame()
 {
-    //<< let delta = Date.now() - beginTime; // milliseconds elapsed since start
     let completionSeconds = Math.floor(answerTimeMilliseconds / 1000);
     
     show("startButton");
